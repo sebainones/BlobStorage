@@ -1,18 +1,22 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
 using System;
 
 namespace NoSqlApp.Utils
 {
     public static class Shared
     {
-        private static string EndpointUrl => Environment.GetEnvironmentVariable("CosmosEndpoint");
-        private static string AuthorizationKey => Environment.GetEnvironmentVariable("CosmosMasterKey");
+        private static string BlobStorageConnectionString => Environment.GetEnvironmentVariable("BlobStorageConnectionString");
 
-        public static CosmosClient Client { get; private set; }
+        private static readonly CloudStorageAccount cloudStorageAccount;
+
+        public static CloudBlobClient CloudBlobClient;
 
         static Shared()
         {
-            Client = new CosmosClient(EndpointUrl, AuthorizationKey);
+            cloudStorageAccount = CloudStorageAccount.Parse(BlobStorageConnectionString);
+
+            CloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
         }
     }
 }
