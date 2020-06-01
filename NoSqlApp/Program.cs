@@ -1,12 +1,9 @@
 ﻿using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Configuration;
-using NoSqlApp.Model;
 using NoSqlApp.Utils;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace NoSqlApp
@@ -69,7 +66,14 @@ namespace NoSqlApp
                 //Now that is has been created
                 CloudBlockBlob cloudBlockBlob = containerReference.GetBlockBlobReference(blobName);
 
-                await cloudBlockBlob.UploadFromByteArrayAsync(imageByteArray, 0, imageByteArray.Length);
+                var isExistentBlob = await cloudBlockBlob.ExistsAsync();
+
+                if (!isExistentBlob)
+                    await cloudBlockBlob.UploadFromByteArrayAsync(imageByteArray, 0, imageByteArray.Length);
+                else
+                    Console.WriteLine("Blob already exists!");
+
+
             }
             catch (Exception e)
             {
