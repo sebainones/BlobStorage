@@ -71,8 +71,7 @@ namespace NoSqlApp
                 if (!isExistentBlob)
                     await cloudBlockBlob.UploadFromByteArrayAsync(imageByteArray, 0, imageByteArray.Length);
                 else
-                    Console.WriteLine("Blob already exists!");
-
+                    Console.WriteLine($"Blob already exists!: {cloudBlockBlob.Uri}");
 
             }
             catch (Exception e)
