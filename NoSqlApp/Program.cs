@@ -31,8 +31,25 @@ namespace NoSqlApp
             byte[] imageByteArray = GetImageByteArray();
 
             await Program.UploadImageAsync(imageByteArray, BlockBlobName);
+
+            await Program.DeleteImageAsync(BlockBlobName);
         }
 
+        private static async Task DeleteImageAsync(string blockBlobName)
+        {
+            try
+            {
+                CloudBlobContainer containerReference = Shared.CloudBlobClient.GetContainerReference(ContainerName);
+                
+                CloudBlockBlob cloudBlockBlob = containerReference.GetBlockBlobReference(blockBlobName);
+                await cloudBlockBlob.DeleteIfExistsAsync();
+            }
+            catch (Exception e)
+            {
+                //TODO: propery log any exception
+                throw;
+            }
+        }
         private static byte[] GetImageByteArray()
         {
             byte[] imageByteArray;
@@ -52,7 +69,6 @@ namespace NoSqlApp
         /// </summary>
         private static async Task<Uri> UploadImageAsync(byte[] imageByteArray, string blobName)
         {
-
             try
             {
                 // Frist get container Reference

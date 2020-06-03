@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BlobStorageApp": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "BlobStorageConnectionString": "UseDevelopmentStorage=true"        
+      }
+    }
+  }
+}
