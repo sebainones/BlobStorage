@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Storage.Blob;
+﻿using log4net;
+using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Configuration;
 using NoSqlApp.Utils;
 using System;
@@ -11,6 +12,9 @@ namespace NoSqlApp
 {
     class Program
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
+
+
         private const string MetadataVehcileType = "vehicleType";
         private static string BlockBlobName;
         private static string ContainerName;
@@ -20,7 +24,7 @@ namespace NoSqlApp
         static CloudBlockBlob CurrentCloudBlockBlob;
 
 
-        public static void Main(string[] args)
+        public static void Main()
         {
             InitializeConfiguration();
 
@@ -79,9 +83,16 @@ namespace NoSqlApp
 
         private async static Task SetMetadataAsync(string vehicleType)
         {
-            CurrentCloudBlockBlob.Metadata[MetadataVehcileType] = vehicleType;
+            try
+            {
+                CurrentCloudBlockBlob.Metadata[MetadataVehcileType] = vehicleType;
 
-            await CurrentCloudBlockBlob.SetMetadataAsync();
+                await CurrentCloudBlockBlob.SetMetadataAsync();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+            }
 
         }
 
@@ -89,13 +100,11 @@ namespace NoSqlApp
         {
             try
             {
-                await CurrentCloudBlockBlob.DeleteIfExistsAsync(); ;
-
+                await CurrentCloudBlockBlob.DeleteIfExistsAsync();
             }
             catch (Exception e)
             {
-                //TODO: propery log any exception
-                throw;
+                Log.Error(e.Message);
             }
         }
 
@@ -134,8 +143,7 @@ namespace NoSqlApp
             }
             catch (Exception e)
             {
-                //TODO: propery log any exception
-                throw;
+                Log.Error(e.Message);
             }
         }
     }
