@@ -16,6 +16,7 @@ namespace NoSqlApp
 
 
         private const string MetadataVehcileType = "vehicleType";
+        private const string MetadataVehcileColor = "vehicleColor";
         private static string BlockBlobName;
         private static string ContainerName;
 
@@ -77,8 +78,10 @@ namespace NoSqlApp
         private static async Task FetchBlobInformation()
         {
             await CurrentCloudBlockBlob.FetchAttributesAsync();
-            WriteLine(CurrentCloudBlockBlob.Metadata[MetadataVehcileType]);
-
+            foreach (var currentKey in CurrentCloudBlockBlob.Metadata.Keys)
+            {
+                WriteLine($"key is {currentKey} and its value is {CurrentCloudBlockBlob.Metadata[currentKey]}");
+            }
         }
 
         private async static Task SetMetadataAsync(string vehicleType)
@@ -136,7 +139,11 @@ namespace NoSqlApp
                 var isExistentBlob = await CurrentCloudBlockBlob.ExistsAsync();
 
                 if (!isExistentBlob)
+                {
+                    CurrentCloudBlockBlob.Metadata[MetadataVehcileColor] = "green";
                     await CurrentCloudBlockBlob.UploadFromByteArrayAsync(imageByteArray, 0, imageByteArray.Length);
+                }
+
                 else
                     WriteLine($"Blob {CurrentCloudBlockBlob.Name} already exists in this URI: {CurrentCloudBlockBlob.Uri}");
 
